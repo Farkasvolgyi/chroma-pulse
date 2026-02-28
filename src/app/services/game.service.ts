@@ -41,7 +41,7 @@ export class GameService {
   readonly activeEdge = signal<'left' | 'right' | null>(null);
   readonly activeTarget = signal<TargetSlot | null>(null);
   readonly activeColor = signal<GameColor | null>(null);
-  readonly interval = signal(2200);
+  readonly interval = signal(3200);
 
   readonly lastResult = signal<'correct' | 'wrong' | null>(null);
   readonly lastHitCircle = signal(-1);
@@ -55,7 +55,7 @@ export class GameService {
   readonly edgeLeftColor = signal<GameColor | null>(null);
   readonly edgeRightColor = signal<GameColor | null>(null);
 
-  readonly speedMultiplier = computed(() => +(2200 / (this.interval()) * this.speedReductionFactor).toFixed(1));
+  readonly speedMultiplier = computed(() => +(3200 / (this.interval()) * this.speedReductionFactor).toFixed(1));
   speedReductionFactor = 1;
 
   readonly showKeyLegend = computed(() => this.correctHits() < 30);
@@ -138,7 +138,7 @@ export class GameService {
     this.activeEdge.set(null);
     this.activeTarget.set(null);
     this.activeColor.set(null);
-    this.interval.set(2200);
+    this.interval.set(3200);
     this.correctHits.set(0);
     this.totalAttempts.set(0);
     this.lastResult.set(null);
@@ -283,7 +283,7 @@ export class GameService {
 
     if (this.correctHits() % 5 === 0 && this.interval() > 600) {
         //optimize this so it doesn't get too fast above 3x speed
-      this.interval.update(v => Math.max(v - 80 + ((2200 - v) / 50), 600));
+      this.interval.update(v => Math.max(v - 70 + ((3200 - v) / 80), 600));
     }
 
     const scheduleNextRound = Math.max(150, 350 - Math.sqrt(this.speedMultiplier()) * 20);
