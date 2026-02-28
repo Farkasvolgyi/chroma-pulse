@@ -41,7 +41,7 @@ export class GameService {
   readonly activeEdge = signal<'left' | 'right' | null>(null);
   readonly activeTarget = signal<TargetSlot | null>(null);
   readonly activeColor = signal<GameColor | null>(null);
-  readonly interval = signal(3200);
+  readonly interval = signal(3000);
 
   readonly lastResult = signal<'correct' | 'wrong' | null>(null);
   readonly lastHitCircle = signal(-1);
@@ -55,7 +55,7 @@ export class GameService {
   readonly edgeLeftColor = signal<GameColor | null>(null);
   readonly edgeRightColor = signal<GameColor | null>(null);
 
-  readonly speedMultiplier = computed(() => +(3200 / (this.interval()) * this.speedReductionFactor).toFixed(1));
+  readonly speedMultiplier = computed(() => +(3000 / (this.interval()) * this.speedReductionFactor).toFixed(1));
   speedReductionFactor = 1;
 
   readonly showKeyLegend = computed(() => this.correctHits() < 30);
@@ -83,10 +83,10 @@ export class GameService {
     const c = this.combo();
     const speed = this.speedMultiplier();
     if (c >= 100 && speed >= 3) return 'LEGENDARY!!!!!!!!!!!!';
-    if (c >= 75) return 'PERFECT!';
-    if (c >= 50) return 'AMAZING';
-    if (c >= 25) return 'GREAT';
-    if (c >= 15) return 'NICE';
+    if (c >= 85) return 'PERFECT!';
+    if (c >= 55) return 'AMAZING';
+    if (c >= 35) return 'GREAT';
+    if (c >= 20) return 'NICE';
     return 'OK';
   });
 
@@ -94,10 +94,10 @@ export class GameService {
     const c = this.combo();
     const speed = this.speedMultiplier();
     if (c >= 100 && speed >= 3) return 'legendary';
-    if (c >= 75) return 'amazing';
-    if (c >= 50) return 'amazing';
-    if (c >= 25) return 'great';
-    if (c >= 15) return 'nice';
+    if (c >= 85) return 'amazing';
+    if (c >= 55) return 'amazing';
+    if (c >= 35) return 'great';
+    if (c >= 20) return 'nice';
     return '';
   });
 
@@ -138,7 +138,7 @@ export class GameService {
     this.activeEdge.set(null);
     this.activeTarget.set(null);
     this.activeColor.set(null);
-    this.interval.set(3200);
+    this.interval.set(3000);
     this.correctHits.set(0);
     this.totalAttempts.set(0);
     this.lastResult.set(null);
@@ -263,8 +263,8 @@ export class GameService {
 
     const combo = this.combo();
     const speedMult = Math.min(Math.sqrt(this.speedMultiplier()), 128);
-    const basePoints = 3;
-    const comboBonus = 1 + Math.min(combo, 25) * 0.15;
+    const basePoints = 2;
+    const comboBonus = 1 + Math.min(combo, 50) * 0.1;
     const speedBonus = speedMult;
     const points = Math.round(basePoints * comboBonus * speedBonus * speedBonus);
 
@@ -282,11 +282,11 @@ export class GameService {
     }
 
     if (this.correctHits() % 5 === 0 && this.interval() > 600) {
-        //optimize this so it doesn't get too fast above 3x speed
-      this.interval.update(v => Math.max(v - 70 + ((3200 - v) / 80), 600));
+      this.interval.update(v => Math.max(v - 80 + ((3000 - v) / 60), 600));
     }
+    const randomSchedule = Math.random() * 150;
 
-    const scheduleNextRound = Math.max(150, 350 - Math.sqrt(this.speedMultiplier()) * 20);
+    const scheduleNextRound = Math.max(50, 350 - Math.sqrt(this.speedMultiplier()) * 50) + randomSchedule;
 
     setTimeout(() => {
       this.activeCircle.set(-1);
@@ -370,7 +370,7 @@ export class GameService {
     const target = this.score();
     const current = this.displayScore();
     const diff = target - current;
-    const steps = 20;
+    const steps = 30;
     const increment = diff / steps;
     let step = 0;
 
