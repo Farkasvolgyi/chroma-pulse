@@ -1,0 +1,202 @@
+<div class="game-board" [class.shake]="game.lastResult() === 'wrong'">
+  <!-- Wrong flash overlay -->
+  @if (game.lastResult() === 'wrong') {
+    <div class="wrong-flash" aria-hidden="true"></div>
+  }
+
+  @if (emberParticleCount() > 0 && game.gameState() === 'playing') {
+    <div class="ember-field" aria-hidden="true">
+      @for (particle of emberParticles(); track particle.id) {
+        <span
+          class="ember-particle"
+          [style.left.%]="particle.left"
+          [style.animation-delay.s]="particle.delay"
+          [style.animation-duration.s]="particle.duration"
+          [style.--ember-drift.px]="particle.drift"
+          [style.width.px]="particle.size"
+          [style.height.px]="particle.size"
+        ></span>
+      }
+    </div>
+  }
+
+  <!-- Edge Rectangle Left -->
+  <div
+    class="edge-rect edge-rect-left"
+    [class.active]="game.activeEdge() === 'left'"
+    [class.hit-correct]="game.lastHitTarget() === 'edge-left' && game.lastResult() === 'correct'"
+    [class.hit-wrong]="game.lastFailureTarget() === 'edge-left' && game.lastResult() === 'wrong'"
+    [style.--rect-color]="game.edgeLeftColor()?.hex ?? 'rgba(255,255,255,0.05)'"
+    [style.--rect-glow]="game.edgeLeftColor()?.glow ?? 'transparent'"
+    aria-hidden="true"
+  >
+    @if (game.lastHitTarget() === 'edge-left' && game.lastResult() === 'correct' && game.combo() >= 10) {
+      <div class="splash-burst" [style.--splash-color]="game.activeColor()?.hex ?? '#fff'" aria-hidden="true">
+        @for (dot of splashDots; track dot) {
+          <span class="splash-dot"></span>
+        }
+      </div>
+    }
+    @if (game.lastFailureTarget() === 'edge-left' && game.lastResult() === 'wrong' && game.failureText()) {
+      <div class="edge-failure-popup" aria-hidden="true">{{ game.failureText() }}</div>
+    }
+  </div>
+
+  <!-- Edge Rectangle Right -->
+  <div
+    class="edge-rect edge-rect-right"
+    [class.active]="game.activeEdge() === 'right'"
+    [class.hit-correct]="game.lastHitTarget() === 'edge-right' && game.lastResult() === 'correct'"
+    [class.hit-wrong]="game.lastFailureTarget() === 'edge-right' && game.lastResult() === 'wrong'"
+    [style.--rect-color]="game.edgeRightColor()?.hex ?? 'rgba(255,255,255,0.05)'"
+    [style.--rect-glow]="game.edgeRightColor()?.glow ?? 'transparent'"
+    aria-hidden="true"
+  >
+    @if (game.lastHitTarget() === 'edge-right' && game.lastResult() === 'correct' && game.combo() >= 10) {
+      <div class="splash-burst" [style.--splash-color]="game.activeColor()?.hex ?? '#fff'" aria-hidden="true">
+        @for (dot of splashDots; track dot) {
+          <span class="splash-dot"></span>
+        }
+      </div>
+    }
+    @if (game.lastFailureTarget() === 'edge-right' && game.lastResult() === 'wrong' && game.failureText()) {
+      <div class="edge-failure-popup" aria-hidden="true">{{ game.failureText() }}</div>
+    }
+  </div>
+
+  <!-- Score Section -->
+  <output class="score-section" aria-live="polite">
+    <div class="score-display">
+      <span class="score-label">SCORE</span>
+      <span class="score-value" [class.pop]="game.lastResult() === 'correct'">
+        {{ game.displayScore() | number:'1.0-0' }}
+      </span>
+      @if (game.scorePopAmount() > 0 && game.lastResult() === 'correct') {
+        <span class="score-pop" aria-hidden="true">+{{ game.scorePopAmount() }}</span>
+      }
+    </div>
+  </output>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-label">SPEED</span>
+      <span class="stat-value">{{ game.speedMultiplier() }}x</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">COMBO</span>
+      <span class="stat-value" [class.combo-fire]="game.combo() >= 3">
+        x{{ game.combo() }}
+      </span>
+    </div>
+    <div class="stat lives-stat">
+      <span class="stat-label">LIVES</span>
+      <span class="stat-value lives" aria-label="Lives remaining: {{ game.lives() }}">
+        @for (alive of livesDisplay(); track $index) {
+          <span class="heart" [class.lost]="!alive" aria-hidden="true">&#9829;</span>
+        }
+      </span>
+    </div>
+  </div>
+
+  <!-- Game Area: Rectangles + Circles -->
+  <div class="game-area">
+    <!-- Left Rectangle -->
+    <div
+      class="side-rect"
+      [class.active]="game.combo() >= 3"
+      [style.--rect-color]="game.leftRectColor()?.hex ?? 'rgba(255,255,255,0.08)'"
+      [style.--rect-glow]="game.leftRectColor()?.glow ?? 'transparent'"
+      aria-hidden="true"
+    >
+      <div class="rect-content">
+        <span class="rect-icon">&#128293;</span>
+        <span class="rect-score">{{ game.displayScore() | number:'1.0-0' }}</span>
+        <span class="rect-value">x{{ game.combo() }}</span>
+        <span class="rect-label">COMBO</span>
+      </div>
+    </div>
+
+    <!-- Circles Grid -->
+    <div class="circles-container" aria-label="Game circles">
+      @for (i of circleIndices; track i) {
+        <div class="circle-wrapper">
+          <div
+            class="circle"
+            [class.active]="game.activeCircle() === i"
+            [class.hit-correct]="game.lastHitCircle() === i && game.lastResult() === 'correct'"
+            [class.hit-wrong]="game.activeCircle() === i && game.lastResult() === 'wrong'"
+            [style.--glow-color]="game.activeCircle() === i && game.activeColor() ? game.activeColor()!.glow : 'transparent'"
+            [style.--circle-bg]="game.activeCircle() === i && game.activeColor() ? game.activeColor()!.hex : ''"
+          >
+            @if (game.activeCircle() === i && game.activeColor()) {
+              @if (game.showCircleKey()) {
+                <span
+                  class="circle-key"
+                  [style.opacity]="game.circleKeyOpacity()"
+                  [style.transition]="'opacity 0.4s ease'"
+                >{{ game.activeColor()!.key | uppercase }}</span>
+              }
+            }
+          </div>
+          @if (game.lastHitCircle() === i && game.lastResult() === 'correct') {
+            <div class="ripple" [style.--ripple-color]="game.activeColor()?.hex ?? '#fff'" aria-hidden="true"></div>
+          }
+          <!-- Combo text popup on the circle -->
+          @if (game.lastHitCircle() === i && game.lastResult() === 'correct' && game.comboText()) {
+            <div class="circle-combo-popup" [attr.data-level]="comboLevel()" aria-hidden="true">
+              {{ game.comboText() }}
+            </div>
+          }
+          @if (game.lastHitTarget() === 'circle' && game.lastHitCircle() === i && game.lastResult() === 'correct' && game.combo() >= 10) {
+            <div class="splash-burst" [style.--splash-color]="game.activeColor()?.hex ?? '#fff'" aria-hidden="true">
+              @for (dot of splashDots; track dot) {
+                <span class="splash-dot"></span>
+              }
+            </div>
+          }
+          @if (game.lastFailureTarget() === 'circle' && game.activeCircle() === i && game.lastResult() === 'wrong' && game.failureText()) {
+            <div class="circle-failure-popup" aria-hidden="true">
+              {{ game.failureText() }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Right Rectangle -->
+    <div
+      class="side-rect"
+      [class.danger]="game.lives() <= 1"
+      [style.--rect-color]="game.rightRectColor()?.hex ?? 'rgba(255,255,255,0.08)'"
+      [style.--rect-glow]="game.rightRectColor()?.glow ?? 'transparent'"
+      aria-hidden="true"
+    >
+      <div class="rect-content">
+        <span class="rect-icon">&#9889;</span>
+        <span class="rect-score">{{ game.displayScore() | number:'1.0-0' }}</span>
+        <span class="rect-value">{{ game.speedMultiplier() }}x</span>
+        <span class="rect-label">SPEED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Legend (fades after 30 correct hits) -->
+  @if (game.showKeyLegend()) {
+    <div
+      class="key-legend"
+      aria-label="Color key mappings"
+      [style.opacity]="game.keyLegendOpacity()"
+      [style.transition]="'opacity 0.5s ease'"
+    >
+      @for (color of gameColors; track color.key) {
+        <div class="key-item" [class.active-key]="game.activeColor()?.key === color.key">
+          <div class="key-btn" [style.--key-color]="color.hex">
+            {{ color.key | uppercase }}
+          </div>
+          <span class="key-name" [style.color]="color.hex">{{ color.name }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>

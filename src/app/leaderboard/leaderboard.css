@@ -1,0 +1,170 @@
+/* ===== Leaderboard Panel ===== */
+.leaderboard-panel {
+  width: 100%;
+  max-width: 550px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 2rem;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.leaderboard-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #FFD740, #FF9500);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+/* ===== Leaderboard List ===== */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.lb-header-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 70px 90px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.lb-entry {
+  display: grid;
+  grid-template-columns: 50px 1fr 70px 90px;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.lb-entry:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lb-entry.top-1 {
+  background: linear-gradient(135deg, rgba(255, 215, 64, 0.08), rgba(255, 149, 0, 0.05));
+  border-color: rgba(255, 215, 64, 0.15);
+}
+
+.lb-entry.top-2 {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.06), rgba(160, 160, 180, 0.04));
+  border-color: rgba(192, 192, 192, 0.12);
+}
+
+.lb-entry.top-3 {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.06), rgba(180, 100, 40, 0.04));
+  border-color: rgba(205, 127, 50, 0.12);
+}
+
+.lb-rank {
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+}
+
+.rank-medal {
+  font-size: 1.2rem;
+}
+
+.rank-number {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.lb-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-combo {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.lb-score {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: right;
+  background: linear-gradient(135deg, #4D9FFF, #AA46FF);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 480px) {
+  .leaderboard-panel {
+    padding: 1.25rem;
+  }
+
+  .lb-header-row,
+  .lb-entry {
+    grid-template-columns: 40px 1fr 55px 70px;
+    font-size: 0.8rem;
+  }
+}

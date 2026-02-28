@@ -1,0 +1,37 @@
+<section class="leaderboard-panel" aria-label="Leaderboard">
+  <div class="leaderboard-header">
+    <h2 class="leaderboard-title">LEADERBOARD</h2>
+    <button class="btn-close" (click)="closePanel.emit()" aria-label="Close leaderboard">&times;</button>
+  </div>
+
+  @if (game.leaderboard().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">&#127942;</span>
+      <p>No scores yet. Be the first to play!</p>
+    </div>
+  } @else {
+    <div class="leaderboard-list">
+      <div class="lb-header-row">
+        <span class="lb-col-rank">RANK</span>
+        <span class="lb-col-name">PLAYER</span>
+        <span class="lb-col-combo">COMBO</span>
+        <span class="lb-col-score">SCORE</span>
+      </div>
+      @for (entry of game.leaderboard(); track $index) {
+        <div class="lb-entry" [class.top-1]="$index === 0" [class.top-2]="$index === 1" [class.top-3]="$index === 2">
+          <span class="lb-rank">
+            @switch ($index) {
+              @case (0) { <span class="rank-medal">&#129351;</span> }
+              @case (1) { <span class="rank-medal">&#129352;</span> }
+              @case (2) { <span class="rank-medal">&#129353;</span> }
+              @default { <span class="rank-number">{{ $index + 1 }}</span> }
+            }
+          </span>
+          <span class="lb-name">{{ entry.name }}</span>
+          <span class="lb-combo">x{{ entry.maxCombo }}</span>
+          <span class="lb-score">{{ entry.score | number:'1.0-0' }}</span>
+        </div>
+      }
+    </div>
+  }
+</section>
